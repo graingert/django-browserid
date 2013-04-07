@@ -24,12 +24,21 @@ except ImportError:
 logger = logging.getLogger(__name__)
 
 
+def make_bytes(text):
+    try:
+        return str.encode(text, 'utf-8')
+    except TypeError:
+        return text
+
+
 def default_username_algo(email):
     # store the username as a base64 encoded sha1 of the email address
     # this protects against data leakage because usernames are often
     # treated as public identifiers (so we can't use the email address).
     username = base64.urlsafe_b64encode(
-        hashlib.sha1(email).digest()).rstrip('=')
+        hashlib.sha1(
+            make_bytes(email)
+        ).digest()).rstrip(b'=')
     return username
 
 
