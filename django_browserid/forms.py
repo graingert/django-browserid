@@ -4,6 +4,7 @@
 from django import forms
 from django.conf import settings
 
+from six import text_type
 
 FORM_JAVASCRIPT = ('browserid/browserid.js',)
 BROWSERID_SHIM = getattr(settings, 'BROWSERID_SHIM',
@@ -19,7 +20,7 @@ class BrowserIDForm(forms.Form):
 
     def clean_assertion(self):
         try:
-            return str(self.cleaned_data['assertion'])
+            return text_type.encode(self.cleaned_data['assertion'], 'ascii')
         except UnicodeEncodeError:
             # not ascii :(
             raise forms.ValidationError('non-ascii string')
